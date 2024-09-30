@@ -38,7 +38,7 @@ def get_piece_moves(board, pos):
     moves = []
 
     if piece_type == PAWN:
-        direction = 1 if color == WHITE else -1
+        direction = -1 if color == WHITE else 1
         new_pos = pos + 8 * direction
         if 0 <= new_pos < 64 and board[new_pos] == EMPTY:
             moves.append(new_pos)
@@ -94,7 +94,10 @@ def get_all_moves(board, color):
         if board[pos] != EMPTY and (board[pos] & (WHITE | BLACK)) == color:
             moves = get_piece_moves(board, pos)
             all_moves.extend([(pos, move) for move in moves])
-    return all_moves
+    
+    # If there are capturing moves available, filter out non-capturing moves
+    capturing_moves = [move for move in all_moves if board[move[1]] != EMPTY]
+    return capturing_moves if capturing_moves else all_moves
 
 # Make a move on the board
 def make_move(board, start, end):
@@ -282,10 +285,10 @@ def play_game():
 
         # Check for winning condition
         if count_pieces(board, current_color) == 0:
-            print(f"Game over: {'White' if current_color == BLACK else 'Black'} wins!")
-            return "White" if current_color == BLACK else "Black"
+            print(f"Game over: {'Black' if current_color == WHITE else 'White'} wins!")
+            return "Black" if current_color == WHITE else "White"
 
-        current_color = WHITE if current_color == BLACK else BLACK
+        current_color = BLACK if current_color == WHITE else WHITE
 
 # Helper functions for chess notation
 def chess_notation(index):
